@@ -12,6 +12,11 @@ import {
 
 export class TemplateData {
     public name: string;
+    public summary: string;
+    public description: string;
+    public todo: string;
+    public warnings: string;
+    public notes: string;
     public decorators: Decorator[];
     public args: Argument[];
     public kwargs: KeywordArgument[];
@@ -21,6 +26,7 @@ export class TemplateData {
 
     private includeName: boolean;
     private includeExtendedSummary: boolean;
+
 
     constructor(
         docstringParts: DocstringParts,
@@ -44,6 +50,11 @@ export class TemplateData {
         }
 
         this.addDefaultTypePlaceholders("_type_");
+        this.summary = "${@@@:Describe " + this.name + " in a short onliner.}"
+        this.description = "${@@@:Detailed description of " + this.name +"}"
+        this.todo = "${@@@:list needed todos here}"
+        this.warnings = "${@@@:If function raises warnings add them here with simple description.}"
+        this.notes = "${@@@:Additional Notes can be usefull.}"
     }
 
     public placeholder() {
@@ -54,18 +65,28 @@ export class TemplateData {
 
     public summaryPlaceholder(): string {
         if (this.includeName) {
-            return this.name + " ${@@@:_summary_}";
+            return this.name + this.summary;
         }
 
-        return "${@@@:_summary_}";
+        return this.summary;
     }
 
     public extendedSummaryPlaceholder(): string {
         if (this.includeExtendedSummary) {
-            return "${@@@:_extended_summary_}";
+            return this.description;
         }
 
         return "";
+    }
+
+    public todoPlaceholder() {
+        return "Todos:\n    - " + this.todo;
+    }
+    public warningsPlaceholder() {
+        return "Warnings:\n    " + this.warnings;
+    }
+    public notesPlaceholder() {
+        return "Notes:\n    " + this.notes;
     }
 
     public typePlaceholder(): string {
